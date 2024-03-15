@@ -59,11 +59,11 @@ button{
     background-color: beige;
 }
 .card{
-    height: 200px;
+    height: 250px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 3%;
+    padding: 10%;
     border-radius: 5%;
 }
 .card .title{
@@ -82,7 +82,7 @@ button{
     text-align: center;
 }
 
-.card .remove {
+.card .remove, .card .edit {
     background-color: beige;
     color: #0000007a;
     border-color: #0000007a;
@@ -109,7 +109,7 @@ dialog{
     background-color: #338a95ab;
 }
 
-dialog #book_title, #book_author, #book_pages {
+dialog #book_title, #book_author, #book_pages, #book_published_year{
     background-color: beige;
     border-radius: 5px;
     width: 300px;
