@@ -140,6 +140,7 @@ class UI {
     }
 
     __init__(){
+        this.displayBooksInLibrary();
         this.addButton.addEventListener("click", () => {
             this.openAddBookDialog.bind(this)();
         });
@@ -175,7 +176,7 @@ class UI {
                 alert('Please enter valid book information!')
             }
         })
-        this.displayBooksInLibrary();
+        
         
     }
 
@@ -204,18 +205,23 @@ class UI {
     createBookCard(current_book_title, current_book_author, current_book_pages, current_book_publishedYear, current_book_read) {
         const currentBook = document.createElement('div');
         currentBook.classList.add('card')
+        this.main_container.appendChild(currentBook) 
+        const button_line = document.createElement('div');
+        button_line.classList.add('button_line')
+        currentBook.appendChild(button_line)
+
     
         const remove = document.createElement('button');
         remove.classList.add('remove')
         remove.setAttribute('value', [current_book_title, current_book_author, current_book_pages, current_book_publishedYear, current_book_read])
         remove.textContent = 'Remove'
-        currentBook.appendChild(remove)
+        button_line.appendChild(remove)
 
         const edit = document.createElement('button');
         edit.classList.add('edit')
         edit.setAttribute('value', [current_book_title, current_book_author, current_book_pages, current_book_publishedYear, current_book_read])
         edit.textContent = 'Edit'
-        currentBook.appendChild(edit)
+        button_line.appendChild(edit)
     
         const title = document.createElement('div');
         title.classList.add('title')
@@ -251,12 +257,11 @@ class UI {
             read.setAttribute('value', false)
         }
         currentBook.appendChild(read)
-        this.main_container.appendChild(currentBook) 
+       
     }
     displayBooksInLibrary(){
-        while (this.main_container.firstChild) {
-            this.main_container.removeChild(this.main_container.firstChild);
-        }
+        const mainContainer = document.querySelector('.main-container')
+        mainContainer.innerHTML = ''
         this.library.sortLibrary()
         const books = this.library.getBooks()
         books.forEach(item => {
@@ -341,30 +346,254 @@ myLibrary.addBook(new Book("Harry Potter and the Sorcerer's Stone"," J.K. Rowlin
 
 let newLibrary = new Library();
 const ui = new UI(myLibrary);
-ui.__init__();
+
+
+
+
+function populateCountryDropdown(){
+    const country_dropdown = document.getElementById('country_dropdown')
+    // Fetch list of countries from a public API
+    fetch('https://restcountries.com/v3.1/all')
+    .then(response => response.json())
+    .then(data => {
+        // Sort the countries alphabetically by name
+        data.sort((a, b) => a.name.common.localeCompare(b.name.common));
+        // Iterate over the response data and populate the dropdown
+        data.forEach(country => {
+        const option = document.createElement('option');
+        option.value = country.name.common;
+        option.textContent = country.name.common;
+        country_dropdown.appendChild(option);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching country data:', error);
+    });
+}
+
+
+function signUpFormValidation(form){
+    // form is an element of html
+    const username = document.getElementById('username')
+    const usernameError = document.querySelector("#username + span.error");
+    const email = document.getElementById('email')
+    const emailError = document.querySelector("#email + span.error");
+    const country = document.getElementById('country_dropdown')
+    const countryError = document.querySelector("#country_dropdown + span.error");
+    const zipcode = document.getElementById('zipcode')
+    const zipcodeError = document.querySelector("#zipcode + span.error");
+    const password = document.getElementById('password')
+    const passwordError = document.querySelector("#password + span.error"); 
+    const passwordConfirmation = document.getElementById('password_confirmation')
+    const passwordConfirmationError = document.querySelector("#password_confirmation + span.error");  
+    let zipcodeFValidation = false;
+
+    username.addEventListener('input', () => {
+        usernameValidation(username,usernameError)
+    })
+    email.addEventListener("input", () => {
+        emailValidation(email,emailError)
+    })
+    country.addEventListener("change", () => {
+        countryValidation(country,countryError)
+        fetchZipcodeFormat(country.value)
+            .then(zipcodeFormat => {
+                zipcode.addEventListener("input", () => {
+                    if (validateZipcode(zipcode, zipcodeError,zipcodeFormat)) {
+                        zipcodeFValidation = true
+                    }
+                })
+            })
+    })
+    password.addEventListener('input', () => {
+        passwordValidation(password,passwordError)
+    })
+    passwordConfirmation.addEventListener('input', () => {
+        passwordConfirmationValidation(password,passwordConfirmation,passwordConfirmationError)
+    })
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        //if (usernameValidation(username,usernameError) && emailValidation(email,emailError) && countryValidation(country,countryError) && zipcodeFValidation && passwordValidation(password,passwordError) && passwordConfirmationValidation(password,passwordConfirmation,passwordConfirmationError)){
+        if (true) {
+            console.log('Form is valid. Submitting')
+            console.log('Form is submitted.')
+            form.submit();
+            ui.__init__();
+            // const user_greeting = document.querySelector(".username_greeting")
+            // console.log(username)
+            // user_greeting.textContent = username.value
+        } else {
+            console.log('Form is invalid. Please correct the errors.');
+        }
+    })
+}
+
+
+
+
+function passwordConfirmationValidation(password,passwordConfirmation,passwordConfirmationError){
+    console.log()
+    if (passwordConfirmation.value === password.value){
+        passwordConfirmationError.textContent = ''
+        passwordConfirmationError.className = "error"
+        return true
+    } else {
+        passwordConfirmationError.textContent = 'Your password confirmation doesn\'t match your password.'
+        return false
+    }
+}
+
+
+function passwordValidation(password,passwordError){
+    // Each time the user types something, we check if the form fields are valid.
+    if (password.validity.valid){
+        passwordError.textContent = ''
+        passwordError.className = "error"
+        return true
+    } else {
+        showPasswordError(password,passwordError);
+    }
+    return false
+}
+
+function showPasswordError(password,passwordError) {
+    if (password.validity.valueMissing) {
+      // If the field is empty,
+      // display the following error message.
+      passwordError.textContent = "You need to enter an password address.";
+    } else if (password.validity.typeMismatch) {
+      // If the field doesn't contain an password,
+      // display the following error message.
+      passwordError.textContent = "Entered value needs to be an password address.";
+    } else if (password.validity.tooShort) {
+      // If the data is too short,
+      // display the following error message.
+      passwordError.textContent = `Email should be at least ${password.minLength} characters; you entered ${password.value.length}.`;
+    }
+    // Set the styling appropriately
+    passwordError.className = "error active";
+}
+
+
+async function fetchZipcodeFormat(country_name) {
+    try {
+        const response = await fetch('https://restcountries.com/v3.1/all')
+        const data = await response.json()
+        let country_zipcode_format
+        data.forEach(country => {
+            if (country.name.common === country_name) {
+                if (country.postalCode != null) {
+                    country_zipcode_format = country.postalCode.format
+                } else {
+                    console.log('No Zip Code format for that country')
+                }
+            }
+        })
+        return country_zipcode_format
+    } catch (error) {
+        console.error('Error fetching country data:', error)
+        return null
+    }
+}
+function convertToRegExp(pattern) {
+    // Replace each '#' character with '\d' (matches any digit)
+    const regexPattern = pattern.replace(/#/g, '\\d');
+    // Add anchors to match the whole string
+    return new RegExp('^' + regexPattern + '$');
+}
+
+function validateZipcode(zipcode, zipcodeError, zipcodeFormat){
+    const regex = convertToRegExp(zipcodeFormat);
+    if (regex.test(zipcode.value)) {
+        // Zip code matches the format
+        zipcodeError.textContent = '';
+        zipcodeError.className = 'error';
+        return true;
+    } else {
+        // Zip code does not match the format
+        zipcodeError.textContent = 'Invalid zip code format. Please use the format: ' + zipcodeFormat;
+        zipcodeError.className = 'error active';
+        return false;
+    }
+}
+
+function countryValidation(country,countryError){
+    if (country.value !== ''){
+        countryError.textContent = ''
+        countryError.className = 'error'
+        return true
+    } else {
+        countryError.textContent = 'Please select a country.'
+        countryError.className = "error active";
+    }
+    return false
+}
+
+function emailValidation(email,emailError){
+    // Each time the user types something, we check if the form fields are valid.
+    if (email.validity.valid){
+        emailError.textContent = ''
+        emailError.className = "error"
+        return true
+    } else {
+        showEmailError(email,emailError);
+    }
+    return false
+}
+
+function showEmailError(email,emailError) {
+    if (email.validity.valueMissing) {
+      // If the field is empty,
+      // display the following error message.
+      emailError.textContent = "You need to enter an email address.";
+    } else if (email.validity.typeMismatch) {
+      // If the field doesn't contain an email address,
+      // display the following error message.
+      emailError.textContent = "Entered value needs to be an email address.";
+    } else if (email.validity.tooShort) {
+      // If the data is too short,
+      // display the following error message.
+      emailError.textContent = `Email should be at least ${email.minLength} characters; you entered ${email.value.length}.`;
+    }
+    // Set the styling appropriately
+    emailError.className = "error active";
+}
+
+function usernameValidation(username,usernameError){
+    // Each time the user types something, we check if the form fields are valid.
+    if (username.validity.valid){
+        usernameError.textContent = ''
+        usernameError.className = "error"
+        return true
+    } else {
+        showUsernameError(username,usernameError);
+    }
+    return false
+}
+
+function showUsernameError(username,usernameError) {
+    if (username.validity.valueMissing) {
+      // If the field is empty,
+      // display the following error message.
+      usernameError.textContent = "You need to enter an username.";
+    } else if (username.validity.typeMismatch) {
+      // If the field doesn't contain an username,
+      // display the following error message.
+      usernameError.textContent = "Entered value needs to be an username.";
+    } else if (username.validity.tooShort) {
+      // If the data is too short,
+      // display the following error message.
+      usernameError.textContent = `Username should be at least ${username.minLength} characters; you entered ${username.value.length}.`;
+    }
+    // Set the styling appropriately
+    usernameError.className = "error active";
+}
+
+populateCountryDropdown()
+const sign_up_form = document.querySelector('.signup')
+console.log(signUpFormValidation(sign_up_form))
+signUpFormValidation(sign_up_form)
 
     
 
 
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  

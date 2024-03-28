@@ -8,48 +8,100 @@
     <link rel="stylesheet"  href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
+    <div class="header">
+        <div class="first_row">
             <div class=title>Library</div>
-            <div class="feature">
-                <button class="add">Add a New Book</button>
-                <dialog class="add-book">
-                    <form id="add_book_form">
-                        <ul>
-                            <li>
-                                <label for="book_title">Book Title: </label>
-                                <input type="text" id="book_title" name="book_title" required>
-                            </li>
-                            <li>
-                                <label for="book_author">Author Name: </label>
-                                <input type="text" id="book_author" name="book_author" required>
-                            </li>
-                            <li>
-                                <label for="book_pages">Total Pages: </label>
-                                <input type="number" id="book_pages" name="book_pages" min="1" required>
-                            </li>
-                            <li>
-                                <label for="book_published_year">Published Year: </label>
-                                <input type="number" id="book_published_year" name="book_published_year" min="1" required>
-                            </li>
-                            <li>
-                                <span>Read Status: </span>
-                                <input type="radio" id="book_read_true" name="book_read" value=true>
-                                <label for="book_read_true">Read</label>
-                                <input type="radio" id="book_read_false" name="book_read" value=false>
-                                <label for="book_read_false">Not Read Yet</label>
-                            </li>
-                        </ul>
-                    </form>
-                    <button class="close" autofocus>Close</button>
-                    <button type="submit" class="save" autofocus>Save</button>
-                </dialog>
+            <div class="user_greeting">Welcome back, <span class="username_greeting"></span></div>
+        </div>
+        <div class="feature">
+            <button class="add">Add a New Book</button>
+            <dialog class="add-book">
+                <form id="add_book_form">
+                    <ul>
+                        <li>
+                            <label for="book_title">Book Title: </label>
+                            <input type="text" id="book_title" name="book_title" required>
+                        </li>
+                        <li>
+                            <label for="book_author">Author Name: </label>
+                            <input type="text" id="book_author" name="book_author" required>
+                        </li>
+                        <li>
+                            <label for="book_pages">Total Pages: </label>
+                            <input type="number" id="book_pages" name="book_pages" min="1" required>
+                        </li>
+                        <li>
+                            <label for="book_published_year">Published Year: </label>
+                            <input type="number" id="book_published_year" name="book_published_year" min="1" required>
+                        </li>
+                        <li>
+                            <span>Read Status: </span>
+                            <input type="radio" id="book_read_true" name="book_read" value=true>
+                            <label for="book_read_true">Read</label>
+                            <input type="radio" id="book_read_false" name="book_read" value=false>
+                            <label for="book_read_false">Not Read Yet</label>
+                        </li>
+                    </ul>
+                </form>
+                <button class="close" autofocus>Close</button>
+                <button type="submit" class="save" autofocus>Save</button>
+            </dialog>
+        </div>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <div>
+                <div>My Account</div>
+                <div>Category</div>
+                <div>Logout Button</div>
             </div>
         </div>
-        <div class="sidebar">Side Bar</div>
-        <div class="footer">Footer</div>
-        <div class="main-container"></div>
+        
+        <div class="main-container">
+            <form class="signup">
+                <ul>
+                    <li>
+                        <label for="username">Username: </label>
+                        <input type="text" id="username" name="username" minlength="3" autocomplete="off">
+                        <span class="error" aria-live="polite"></span>
+                    </li>
+                    <li>
+                        <label for="email">Email: </label>
+                        <input type="email" id="email" name="email" minlength="8" autocomplete="off">
+                        <span class="error" aria-live="polite"></span>
+                    </li>
+                    <li>
+                        Country: 
+                        <span>
+                            <select name="country" id="country_dropdown">
+                                <option value="">Select a country</option>
+                            </select>
+                            <span class="error" aria-live="polite"></span>
+                        </span>
+                    </li>
+                    <li>
+                        <label for="zipcode">Zip Code: </label>
+                        <input type="text" id="zipcode" name="zipcode" autocomplete="off">
+                        <span class="error" aria-live="polite"></span>
+                    </li>
+                    <li>
+                        <label for="password">Password: </label>
+                        <input type="password" id="password" name="password" minlength="8" autocomplete="off">
+                        <span class="error" aria-live="polite"></span>
+                    </li>
+                    <li>
+                        <label for="password_confirmation">Password Confirmation: </label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" autocomplete="off">
+                        <span class="error" aria-live="polite"></span>
+                    </li>
+                    <li>
+                        <button type="submit" class="signup">Sign Up</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
     </div>
+    <div class="footer">Footer</div>
 </body>
 </html>
 
